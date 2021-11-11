@@ -47,7 +47,7 @@ function getCover() {
                 // Now you can get the cover object
                 const cover = coverList.getValue(0);
                 // Get the thumbnail asynchronously
-                const getThumbPromise = promisify(cover.getThumbAsync);
+                const getThumbPromise = promisify(cover.getThumbAsync.bind(cover));
                 let path = await getThumbPromise(100, 100);
 
                 path = path
