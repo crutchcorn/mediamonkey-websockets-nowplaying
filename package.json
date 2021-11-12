@@ -1,0 +1,22 @@
+{
+  "name": "mediamonkey-websockets-nowplaying",
+  "version": "0.0.1",
+  "description": "A MediaMonkey 5 plugin to notify a display of what's playing via websockets.",
+  "main": "index.js",
+  "scripts": {
+    "build": "pack-mmip ./src ./dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crutchcorn/mediamonkey-websockets-nowplaying.git"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/crutchcorn/mediamonkey-websockets-nowplaying/issues"
+  },
+  "homepage": "https://github.com/crutchcorn/mediamonkey-websockets-nowplaying#readme",
+  "dependencies": {
+    "pack-mmip": "^1.1.1"
+  }
+}

@@ -1,0 +1,8 @@
+{
+    "title": "WebSocket Now Playing",
+    "id": "WebSocketNowPlaying",
+    "description": "To notify a display of what's playing via websockets",
+    "version": "0.1.0",
+    "author": "crutchcorn",
+    "icon": "info.png"
+}

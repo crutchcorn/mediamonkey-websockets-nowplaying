@@ -14,7 +14,7 @@ document.head.appendChild(b64script);
 function setNowPlaying(song) {
     if (!window.musicsocket) {
         try {
-            window.musicsocket = io("http://localhost:3090");
+            window.musicsocket = io("http://localhost:3080");
         } catch (e) {
             // console.log(e);
         }
