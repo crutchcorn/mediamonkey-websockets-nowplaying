@@ -1,34 +1,63 @@
 var fs = app.filesystem;
 var sett = window.settings.get("System");
-var currentTrack = player.getCurrentTrack();
 
+// Add B64 lib
 var b64script = document.createElement('script');
-
 b64script.setAttribute('src','https://cdn.jsdelivr.net/npm/js-base64@3.7.2/base64.min.js');
-
 document.head.appendChild(b64script);
 
-function setNowPlaying(song) {}
+// Add socketio lib
+var b64script = document.createElement('script');
+b64script.setAttribute('src','https://cdn.socket.io/4.3.2/socket.io.min.js');
+document.head.appendChild(b64script);
 
-function _onPlaybackState(state) {
-    switch (state) {
-        case "trackChanged":
-        case "unpause":
-        case "play":
-            setNowPlaying(getNowPlaying());
-            break;
-        case "stop":
-        case "pause":
-            setNowPlaying(undefined);
-            break;
-        default:
-            break;
+function setNowPlaying(song) {
+    if (!window.musicsocket) {
+        try {
+            window.musicsocket = io("http://localhost:3090");
+        } catch (e) {
+            // console.log(e);
+        }
+    };
+    window.musicsocket.emit("SET_NOW_PLAYING", song || "");
+}
+
+async function getNowPlaying() {
+    var currentTrack = player.getCurrentTrack();
+    if (!currentTrack) {
+        setNowPlaying(null);
+        return null;
+    }
+    const coverB64 = await getCover() || "";
+
+    return {
+        song: currentTrack.title,
+        artist: currentTrack.artist,
+        albumArt: coverB64
+    }
+}
+
+async function _onPlaybackState(state) {
+    try {
+        switch (state) {
+            case "trackChanged":
+            case "unpause":
+            case "play":
+                setNowPlaying(await getNowPlaying());
+                break;
+            case "stop":
+            case "pause":
+                setNowPlaying(undefined);
+                break;
+            default:
+                break;
+        }
+    } catch (e) {
+        // console.error(e);
     }
 }
 
 app.listen(app.player, "playbackState", _onPlaybackState);
-
-const sett = window.settings.get('System');
 
 var promisify = (fn) => {
     return (...args) => {
@@ -38,10 +67,8 @@ var promisify = (fn) => {
     }
 }
 
-promisify((one, cb) => cb(one))(1).then((one) => console.log(one))
-
-function getCover(currentTrack) {
-    var coverList = currentTrack.loadCoverListAsync();
+function getCover() {
+    var coverList = player.getCurrentTrack().loadCoverListAsync();
 
     return new Promise((resolve) => {
         // Wait for the coverList to asynchronously load
@@ -51,7 +78,6 @@ function getCover(currentTrack) {
                 try {
                     // Now you can get the cover object
                     const cover = coverList.getValue(0);
-                    console.log({coverList})
                     // Get the thumbnail asynchronously
                     const getThumbPromise = promisify(cover.getThumbAsync.bind(cover));
                     let path = await getThumbPromise(100, 100);
@@ -76,5 +102,3 @@ function getCover(currentTrack) {
         });
     });
 }
-
-function getNowPlaying() {}
